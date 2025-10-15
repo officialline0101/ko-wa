@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アンケートフォーム</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* 右端の細いナビ（固定） */
+        .side-nav {
+            position: fixed; /* 画面スクロールしても固定 */
+            right: -5px; /* さらに右へ */
+            top: 80%; /* 画面中央に固定 */
+            transform: translateY(-50%) translateX(12px); /* 中央配置と右ずらし */
+            background: #58453b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px;
+            border-radius: 10px 0 0 10px;
+            z-index: 1000;
+            width: 35px; /* さらに細く */
+        }
+
+        .side-nav a:active {
+            transform: scale(1.0); /* タップした後に元のサイズに戻す */
+        }
+
+        .side-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 10px;
+            margin: 5px 0;
+            padding: 5px;
+            transition: background 0.3s, transform 0.2s;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+        }
+
+        .side-nav a span {
+            font-size: 24px; /* 矢印をさらに大きく */
+            position: absolute;
+            left: -0px; /* 左端に寄せる */
+            top: 13px; /* さらに下へ */
+        }
+
+        /* スマホ用の微調整 */
+        @media (max-width: 600px) {
+            .side-nav {
+                right: 2px; /* スマホではさらに右端に */
+                width: 30px; /* もっと細く */
+            }
+
+            .side-nav a {
+                width: 28px;
+                height: 28px;
+            }
+
+            .side-nav a i {
+                font-size: 12px; /* スマホではもっと小さく */
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #58453b, #35271f);
+            color: white;
+            padding: 20px;
+            border-radius: 0 15px 0px 45px;
+            text-align: center;
+            display: block;
+            margin: -20px -15px 20px -15px;
+            font-size: 26px;
+            font-weight: 600;
+            box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 10px;
+            padding: 3px;
+            font-weight: 600;
+            background-color: #58453b;
+            color: white;
+            border-radius: 6px;
+            font-size: 18px;
+            text-align: center;
+            /* 中央揃え */
+            position: relative;
+            overflow: hidden;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .required-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #58453b;
+            font-weight: bold;
+            font-size: 0.9em;
+            border-radius: 4px;
+            padding: 2px 6px;
+            border: 2px solid #58453b;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+/* 対象コンテナ（縦並び） */
+.Power-buttons,
+.experience-buttons,
+.priority-buttons,
+.demand-buttons,
+.chance-buttons,
+.Introduction-buttons,
+.delivery-buttons,
+.menu-buttons {
+  display: flex;
+  flex-direction: column;   /* ←縦一列 */
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* ボタンのベース */
+.Power-buttons button,
+.experience-buttons button,
+.priority-buttons button,
+.demand-buttons button,
+.chance-buttons button,
+.Introduction-buttons button,
+.delivery-buttons button,
+.menu-buttons button {
+  width: 100%;                 /* コンテナ幅いっぱい */
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f7f7f7;
+  cursor: pointer;
+  box-sizing: border-box;
+  text-align: center;
+  white-space: nowrap;
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease;
+  animation: fadeSlideIn .28s ease both;
+}
+
+/* アクティブ状態 */
+.Power-buttons button.active,
+.experience-buttons button.active,
+.priority-buttons button.active,
+.demand-buttons button.active,
+.chance-buttons button.active,
+.Introduction-buttons button.active,
+.delivery-buttons button.active,
+.menu-buttons button.active {
+  background-color: #444;
+  color: #fff;
+  border-color: #444;
+}
+
+/* ホバー＆フォーカスのちょい浮きアニメ */
+.Power-buttons button:hover,
+.experience-buttons button:hover,
+.priority-buttons button:hover,
+.demand-buttons button:hover,
+.chance-buttons button:hover,
+.Introduction-buttons button:hover,
+.delivery-buttons button:hover,
+.menu-buttons button:hover,
+.Power-buttons button:focus-visible,
+.experience-buttons button:focus-visible,
+.priority-buttons button:focus-visible,
+.demand-buttons button:focus-visible,
+.chance-buttons button:focus-visible,
+.Introduction-buttons button:focus-visible,
+.delivery-buttons button:focus-visible,
+.menu-buttons button:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  outline: none;
+}
+
+/* ふわっとスライドイン */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* （任意）ちょいステップで順番に入る感じ */
+.Power-buttons button:nth-child(1),
+.experience-buttons button:nth-child(1),
+.priority-buttons button:nth-child(1),
+.demand-buttons button:nth-child(1),
+.chance-buttons button:nth-child(1),
+.Introduction-buttons button:nth-child(1),
+.delivery-buttons button:nth-child(1),
+.menu-buttons button:nth-child(1) { animation-delay: .02s; }
+
+.Power-buttons button:nth-child(2),
+.experience-buttons button:nth-child(2),
+.priority-buttons button:nth-child(2),
+.demand-buttons button:nth-child(2),
+.chance-buttons button:nth-child(2),
+.Introduction-buttons button:nth-child(2),
+.delivery-buttons button:nth-child(2),
+.menu-buttons button:nth-child(2) { animation-delay: .06s; }
+
+.Power-buttons button:nth-child(3),
+.experience-buttons button:nth-child(3),
+.priority-buttons button:nth-child(3),
+.demand-buttons button:nth-child(3),
+.chance-buttons button:nth-child(3),
+.Introduction-buttons button:nth-child(3),
+.delivery-buttons button:nth-child(3),
+.menu-buttons button:nth-child(3) { animation-delay: .10s; }
+
+/* demand だけ横二列 */
+.demand-buttons {
+  display: grid;                 /* ← flex を上書き */
+  grid-template-columns: 1fr 1fr;/* 二列 */
+  gap: 10px;                     /* 既存の余白を継承 */
+  margin-bottom: 20px;           /* 既存と揃える */
+}
+
+/* グリッド内でボタンをしっかり広げる */
+.demand-buttons button {
+  width: 100%;
+}
+
+/* demand だけ横二列 */
+.demand-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+/* ボタンはグリッド内で全幅 */
+.demand-buttons button{ width:100%; }
+
+/* ☑ その他入力欄は “2列ぶち抜き”＆見た目調整 */
+.demand-other-wrap{
+  display:none;               /* 初期は非表示 */
+  grid-column:1 / -1;         /* ★ ここが肝：2列ぶち抜き */
+  margin-top:-2px;            /* （好みで微調整） */
+}
+
+.demand-other-wrap.show{ display:block; }
+
+.demand-other-wrap input{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  box-sizing:border-box;
+  font:inherit;
+}
+
+
+        .date-inputs input[type="datetime-local"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #322a25;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .menu-section {
+            display: none;
+        }
+
+        .menu-section.active {
+            display: block;
+        }
+
+        .current-month {
+            font-size: 16px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .menu-section {
+            display: none;
+        }
+
+        .menu-section.active {
+            display: block;
+        }
+
+        #repairLabel,
+        #repairButtons {
+            display: none;
+        }
+
+        .highlight-background {
+            background-color: #f9f9d6;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            margin-top: 10px;
+            /* 上に余白を追加 */
+        }
+
+        .datetime-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+/* 基本スタイル */
+.info-text {
+    margin: 20px 0;
+    font-family: "Noto Sans JP", "Roboto", sans-serif;
+    font-size: 14px;
+    color: #333; /* 読みやすい濃い文字色 */
+    background-color: #f8f9fa;
+    line-height: 1.8;
+    text-align: left;
+    word-wrap: break-word;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    max-width: 800px; /* 横幅制限 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影を追加 */
+    overflow-y: auto; /* 長文スクロール対応 */
+}
+
+/* 見出しスタイル */
+.info-text h1 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.info-text h2 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 8px;
+}
+
+/* 強調テキスト */
+.info-text strong {
+    color: #007bff;
+}
+
+/* モバイル向け調整 */
+@media (max-width: 768px) {
+    .info-text {
+        font-size: 13px;
+        padding: 15px;
+        max-width: 100%;
+    }
+
+    .info-text h1 {
+        font-size: 16px;
+    }
+
+    .info-text h2 {
+        font-size: 14px;
+    }
+}
+
+        .info-textmemo {
+            margin-top: 20px;
+            /* 上の余白 */
+            margin-bottom: 10px;
+            /* 下に白い隙間を追加 */
+            font-size: 13px;
+            color: #000000;
+            line-height: 1.5;
+            text-align: center;
+            word-wrap: break-word;
+            background-color: #eef9f5;
+            /* 青っぽい背景色を追加 */
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* 携帯端末向けのレスポンシブデザイン */
+        @media (max-width: 768px) {
+            .info-textmemo {
+                font-size: 11.5px;
+                /* スマホでは少し小さく */
+                margin-top: 10px;
+                /* 上下のマージンを調整 */
+                line-height: 2.0;
+                /* テキストの高さ調整 */
+            }
+        }
+
+
+        /* 100点の予約フォームCSS */
+
+        input:focus,
+        textarea:focus {
+            border-color: #58453b;
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #58453b;
+            color: #000000;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background-color: #e9e9e9;
+            transform: scale(1.05);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #979797;
+        }
+
+        .submit-button:hover {
+            background-color: #979797;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            input,
+            button {
+                font-size: 14px;
+            }
+        }
+
+        button.active {
+            outline: 2px solid #696969;
+            /* ここで枠線を指定 */
+            outline-offset: 2px;
+        }
+
+        /* 必須マークのスタイル */
+        .required {
+            color: #ffffff;
+            /* ゴールド（黄色） */
+            font-weight: lighter;
+            /* 文字を細くする */
+            font-size: 0.6em;
+            margin-left: 5px;
+            vertical-align: 0.8em;
+            /* 位置を少し上に調整 */
+
+            /* 白色背景の四角形 */
+            background-color: rgb(255, 15, 15);
+            padding: 0 5px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+
+        .current-month {
+            text-align: center;
+            display: block;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -10px);
+            /* Y方向に上げる */
+            background-color: #58453b;
+            color: #fff;
+            padding: 3px 12px;
+            /* ボックスのパディングを縮小 */
+            border-radius: 8px;
+            /* 角の丸みを少し減少 */
+            font-size: 1.4rem;
+            /* フォントサイズを小さく */
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(47, 103, 167, 0.2);
+            /* 影も控えめに */
+        }
+
+    /* ナビゲーションバー */
+    .sidebar {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #1e1e2d;
+        padding: 10px;
+        border-radius: 10px 0 0 10px;
+        z-index: 1000;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 15px;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 10px;
+        background: #4a90e2;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+
+    .sidebar a:hover {
+        background: #357ac4;
+    }
+
+    /* スクロール用のセクション */
+    .section {
+        padding: 50px 10px;
+        margin-top: 30px;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- 右側の追従ナビ -->
+    <div class="side-nav" id="sideNav">
+        <a href="#section-message">
+            <span>⇩</span>
+            <i class="fas fa-comment"></i>
+        </a>
+    </div>
+
+    <div class="container">
+        <h1>アンケート<br>アンケートフォーム</h1>
+        <div class="info-text">以下全て入力後【アンケート送信】ボタンを押してください。</div>
+
+        <div class="label">　　ご来店の目的<span class="required">必須</span></div>
+        <div class="priority-buttons">
+            <button type="button" id="onepriority" onclick="selectpriority(this)">身体がしんどい</button>
+            <button type="button" id="twopriority" onclick="selectpriority(this)">痛みを取りたい</button>
+            <button type="button" id="threepriority" onclick="selectpriority(this)">健康目的</button>
+            <button type="button" id="fourpriority" onclick="selectpriority(this)">癒されたい</button>
+            <button type="button" id="fivepriority" onclick="selectpriority(this)">その他</button>
+<!-- ご来店の目的：その他入力 -->
+<div id="priorityOtherWrap" style="display:none; margin:10px 0 20px;">
+  <input
+    id="priorityOtherInput"
+    type="text"
+    placeholder="その他の内容を入力してください"
+    style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box;"
+  />
+</div>
+</div>
+
+        <div class="label">　　疲れを感じる箇所を<span class="required">必須</span><br>教えてください</div>
+        <div class="demand-buttons">
+            <button type="button" id="onedemand" onclick="selectdemand(this)">頭</button>
+            <button type="button" id="twodemand" onclick="selectdemand(this)"> 首</button>
+            <button type="button" id="threedemand" onclick="selectdemand(this)">肩</button>
+            <button type="button" id="fourdemand" onclick="selectdemand(this)">背中</button>
+            <button type="button" id="fivedemand" onclick="selectdemand(this)">腰</button>
+            <button type="button" id="sixdemand" onclick="selectdemand(this)">股関節</button>
+            <button type="button" id="sebundemand" onclick="selectdemand(this)"> 腕</button>
+            <button type="button" id="eitodemand" onclick="selectdemand(this)">手</button>
+            <button type="button" id="naindemand" onclick="selectdemand(this)">足</button>
+            <button type="button" id="tendemand" onclick="selectdemand(this)">足裏</button>
+            <button type="button" id="irebundemand" onclick="selectdemand(this)">その他</button>
+  <!-- ▼ココを .demand-buttons の内側末尾に置く ▼ -->
+  <div id="demandOtherWrap" class="demand-other-wrap">
+    <input
+      id="demandOtherInput"
+      type="text"
+      placeholder="その他の内容を入力してください"
+    />
+  </div>
+</div>
+
+        <div class="label">　現在お怪我はありますか？<span class="required">必須</span></div>
+        <div class="chance-buttons">
+            <button type="button" id="onechance" onclick="selectchance(this)">有り</button>
+            <button type="button" id="twochance" onclick="selectchance(this)">無し</button>
+        </div>
+
+        <div class="label">　　病気お怪我の既往歴を<span class="required">必須</span><br>教えてください。</div>
+        <textarea id="message" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+
+        <div class="label">　現在妊娠されていますか？<span class="required">必須</span></div>
+        <div class="Introduction-buttons">
+            <button type="button" id="oneIntroduction" onclick="selectIntroduction(this)">はい</button>
+            <button type="button" id="twoIntroduction" onclick="selectIntroduction(this)">いいえ</button>
+        </div>
+
+        <div class="label">　　ボディーケアのご経験を<span class="required">必須</span><br>教えてください。</div>
+        <div class="delivery-buttons">
+            <button type="button" id="onedelivery" onclick="selectdelivery(this)">初めて</button>
+            <button type="button" id="twodelivery" onclick="selectdelivery(this)">今までに数回</button>
+            <button type="button" id="suridelivery" onclick="selectdelivery(this)">年に何度か</button>
+            <button type="button" id="foolivery" onclick="selectdelivery(this)">月に何度か</button>
+        </div>
+
+        <div class="label">　　お好みの力加減<span class="required">必須</span></div>
+        <div class="Power-buttons">
+            <button type="button" id="onePower" onclick="selectPower(this)">弱め</button>
+            <button type="button" id="twoPower" onclick="selectPower(this)">やや弱め</button>
+            <button type="button" id="threePower" onclick="selectPower(this)">普通</button>
+            <button type="button" id="fourPower" onclick="selectPower(this)">やや強め</button>
+            <button type="button" id="fivePower" onclick="selectPower(this)">強め</button>
+        </div>
+
+        <div class="label">　　もみ返しのご経験<span class="required">必須</span></div>
+        <div class="experience-buttons">
+            <button type="button" id="oneexperience" onclick="selectexperience(this)">有り</button>
+            <button type="button" id="twoexperience" onclick="selectexperience(this)">無し</button>
+        </div>
+
+        <div class="label">備考</div>
+        <textarea id="message2" rows="4" placeholder="メッセージを入力してください"></textarea>
+
+        <button class="submit-button" onclick="submitForm()" div id="section-message">送信</button>
+    </div>
+
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
+    <script>
+  let priorityCount = '';
+  let demandCount = '';
+  let chanceCount = '';
+  let IntroductionCount = '';
+  let deliveryCount = '';
+  let PowerCount = '';
+  let experienceCount = '';
+
+  // ★ 追加
+  let isPriorityOtherActive = false;
+  let isDemandOtherActive = false;
+
+        // LIFF初期化
+        document.addEventListener('DOMContentLoaded', function () {
+            liff.init({
+                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
+            }).then(() => {
+                // LIFF初期化成功時の処理
+                console.log('LIFF初期化成功');
+            }).catch((err) => {
+                // LIFF初期化失敗時の処理
+                console.error('LIFF初期化失敗', err);
+            });
+        });
+
+        // プレースホルダーを非表示にする関数
+        function hidePlaceholder(placeholderId) {
+            document.getElementById(placeholderId).style.display = 'none';
+        }
+
+        // プレースホルダーを表示する関数（入力がない場合）
+        function showPlaceholder(inputId, placeholderId) {
+            const input = document.getElementById(inputId);
+            if (!input.value) {
+                document.getElementById(placeholderId).style.display = 'inline';
+            }
+        }
+
+  function selectpriority(element) {
+    const buttons = document.querySelectorAll('.priority-buttons button');
+    buttons.forEach(button => button.classList.remove('active'));
+
+    element.classList.add('active');
+
+    const priorityOtherWrap = document.getElementById('priorityOtherWrap');
+    const priorityOtherInput = document.getElementById('priorityOtherInput');
+
+    if (element.id === 'fivepriority') {
+      // 「その他」選択 → 入力欄を表示
+      isPriorityOtherActive = true;
+      priorityOtherWrap.style.display = 'block';
+
+      // 入力内容があればそれを、なければ「その他」を一旦格納
+      const v = priorityOtherInput.value.trim();
+      priorityCount = v || 'その他';
+
+      // 入力中も priorityCount を更新
+      priorityOtherInput.oninput = () => {
+        if (isPriorityOtherActive) {
+          const val = priorityOtherInput.value.trim();
+          priorityCount = val || 'その他';
+        }
+      };
+    } else {
+      // 「その他」以外 → 入力欄を隠す＆クリア
+      isPriorityOtherActive = false;
+      priorityOtherWrap.style.display = 'none';
+      priorityOtherInput.value = '';
+      priorityCount = element.innerText;
+    }
+  }
+
+function selectdemand(element){
+  element.classList.toggle('active');
+
+  const demandOtherWrap  = document.getElementById('demandOtherWrap');
+  const demandOtherInput = document.getElementById('demandOtherInput');
+  const otherBtn         = document.getElementById('irebundemand');
+
+  // 「その他」選択のON/OFFで入力欄を切り替え
+  if(element.id === 'irebundemand'){
+    if(element.classList.contains('active')){
+      demandOtherWrap.classList.add('show');   // ← classで表示
+      // フォーカスするとUX良い
+      setTimeout(()=> demandOtherInput.focus(), 0);
+    }else{
+      demandOtherWrap.classList.remove('show');
+      demandOtherInput.value = '';
+    }
+  }
+
+  // 選択中のテキストを収集
+  let selectedTexts = Array.from(document.querySelectorAll('.demand-buttons button.active'))
+    .map(btn => btn.innerText);
+
+  // 「その他」がONのときは入力値で置換
+  if(otherBtn.classList.contains('active')){
+    const v = demandOtherInput.value.trim();
+    selectedTexts = selectedTexts.filter(t => t !== 'その他');
+    if(v) selectedTexts.push(v);
+
+    demandOtherInput.oninput = () => {
+      const val = demandOtherInput.value.trim();
+      let current = Array.from(document.querySelectorAll('.demand-buttons button.active'))
+        .map(btn => btn.innerText)
+        .filter(t => t !== 'その他');
+      if(val) current.push(val);
+      demandCount = current;
+    };
+  }
+
+  demandCount = selectedTexts;   // 配列で保持（必要なら .join(', ') に）
+}
+
+
+        function selectchance(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.chance-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            chanceCount = element.innerText;
+        }
+
+        function selectIntroduction(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.Introduction-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            IntroductionCount = element.innerText;
+        }
+
+        function selectdelivery(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.delivery-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            deliveryCount = element.innerText;
+        }
+
+        function selectPower(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.Power-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            PowerCount = element.innerText;
+        }
+
+        function selectexperience(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.experience-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            experienceCount = element.innerText;
+        }
+
+        function submitForm() {
+            const message = document.getElementById('message').value;
+            const message2 = document.getElementById('message2').value;
+            priorityCount: priorityCount;
+            demandCount: demandCount;
+            chanceCount: chanceCount;
+            IntroductionCount: IntroductionCount;
+            deliveryCount: deliveryCount;
+            PowerCount: PowerCount;
+            experienceCount: experienceCount;
+            
+            const formData = {
+                message,
+                message2,
+                priorityCount,
+                demandCount,
+                chanceCount,
+                IntroductionCount,
+                deliveryCount,
+                PowerCount,
+                experienceCount,
+            };
+
+            // フォームデータのチェック
+            if (!formData.priorityCount) {
+                alert('ご来店の目的をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.demandCount) {
+                alert('疲れを感じる箇所を教えてくださいをご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.chanceCount) {
+                alert('現在お怪我はおりますか？をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message) {
+                alert('病気お怪我の既往歴を教えてください。を入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.IntroductionCount) {
+                alert('現在妊娠されていますか？をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.deliveryCount) {
+                alert('ボディーケアのご経験を教えてください。をご選択ください。');
+                return;
+            }
+            
+            // フォームデータのチェック
+            if (!formData.PowerCount) {
+                alert('お好みの力加減をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.experienceCount) {
+                alert('もみ返しのご経験を教えてください。をご選択ください。');
+                return;
+            }
+
+// 送信前に demandCount を整形（配列 or カンマ区切りにも対応）
+const demandLines =
+  Array.isArray(formData.demandCount)
+    ? formData.demandCount.map(s => `・${s}`).join('\n')
+    : (typeof formData.demandCount === 'string' && formData.demandCount.includes(','))
+      ? formData.demandCount.split(',').map(s => `・${s.trim()}`).join('\n')
+      : `・${formData.demandCount}`;
+
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `≪アンケート≫\n\n【ご来店目的】\n・${formData.priorityCount}\n\n【疲れを感じる箇所】\n${demandLines}\n\n【現在のお怪我】\n・${formData.chanceCount}\n\n【病気お怪我の既往歴】\n・${formData.message}\n\n【妊娠に関して】\n・${formData.IntroductionCount}\n\n【ボディーケアのご経験】\n・${formData.deliveryCount}\n\n【お好みの力加減】\n・${formData.PowerCount}\n\n【もみ返しのご経験】\n・${formData.experienceCount}\n\n【備考】\n・${formData.message2}`
+            }]).then(() => {
+                /* メッセージ送信成功時の処理 */
+                alert('ご記入ありがとうございます。「OK」をタップしてください。');
+                /* LIFFウィンドウを閉じる */
+                liff.closeWindow();
+            }).catch((err) => {
+                /* メッセージ送信失敗時の処理 */
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
+
+    </script>
+</body>
+
+</html>
