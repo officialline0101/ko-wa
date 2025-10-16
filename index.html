@@ -234,46 +234,6 @@
   outline: none;
 }
 
-/* ふわっとスライドイン */
-@keyframes fadeSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* （任意）ちょいステップで順番に入る感じ */
-.Power-buttons button:nth-child(1),
-.experience-buttons button:nth-child(1),
-.priority-buttons button:nth-child(1),
-.demand-buttons button:nth-child(1),
-.chance-buttons button:nth-child(1),
-.Introduction-buttons button:nth-child(1),
-.delivery-buttons button:nth-child(1),
-.menu-buttons button:nth-child(1) { animation-delay: .02s; }
-
-.Power-buttons button:nth-child(2),
-.experience-buttons button:nth-child(2),
-.priority-buttons button:nth-child(2),
-.demand-buttons button:nth-child(2),
-.chance-buttons button:nth-child(2),
-.Introduction-buttons button:nth-child(2),
-.delivery-buttons button:nth-child(2),
-.menu-buttons button:nth-child(2) { animation-delay: .06s; }
-
-.Power-buttons button:nth-child(3),
-.experience-buttons button:nth-child(3),
-.priority-buttons button:nth-child(3),
-.demand-buttons button:nth-child(3),
-.chance-buttons button:nth-child(3),
-.Introduction-buttons button:nth-child(3),
-.delivery-buttons button:nth-child(3),
-.menu-buttons button:nth-child(3) { animation-delay: .10s; }
-
 /* demand だけ横二列 */
 .demand-buttons {
   display: grid;                 /* ← flex を上書き */
